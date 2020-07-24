@@ -19,9 +19,10 @@ type OnTagCallback func(
 
 
 type MsgQueueBase interface {
-    Publish(topic string, payload []byte)   error
-    Subscribe(topic string)                 error
-    UnSubscribe(topic string)               error
-    SubscribeCallback(ontag OnTagCallback)  error
-    Close()                                 error
+    Publish(topic string, payload []byte) error
+	Subscribe(topic string) error
+	UnSubscribe(topic string) error
+	SubscribeCallback(ontag OnTagCallback) error
+	SubscribeChannel() chan *Tag
+	Close() error
 }

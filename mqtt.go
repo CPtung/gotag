@@ -64,6 +64,10 @@ func (self *TpMqtt) UnSubscribe(topic string) error {
 	return nil
 }
 
+func (self *TpMqtt) SubscribeChannel() chan *Tag {
+	return self.ch
+}
+
 func (self *TpMqtt) SubscribeCallback(hnd OnTagCallback) error {
 	if self.c == nil {
 		return errors.New("tag client not found")
@@ -74,6 +78,7 @@ func (self *TpMqtt) SubscribeCallback(hnd OnTagCallback) error {
 
 func (self *TpMqtt) Close() error {
 	if self.c != nil {
+		close(self.ch)
 		self.c.Disconnect(250)
 	}
 	return nil
@@ -92,7 +97,15 @@ func (self *TpMqtt) onMessageReceived(client mqtt.Client, message mqtt.Message) 
 		self.log.Errorf("on message received error (%v)", err.Error())
 		return
 	}
-	self.ontag(t.SourceName, t.TagName, t.Val, t.ValType, t.Ts, t.Unit)
+	if self.ontag != nil {
+		self.ontag(t.SourceName, t.TagName, t.Val, t.ValType, t.Ts, t.Unit)
+	}
+
+	select {
+	case self.ch <- t:
+	default:
+	}
+
 	t = nil
 }
 

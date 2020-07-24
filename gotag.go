@@ -69,6 +69,13 @@ func (self *Tagf) SubscribeCallback(ontag OnTagCallback) error {
 	return self.client.SubscribeCallback(ontag)
 }
 
+func (self *Tagf) SubscribeChannel() <-chan *Tag {
+	if !(self != nil && self.client != nil) {
+		return nil
+	}
+	return self.client.SubscribeChannel()
+}
+
 func (self *Tagf) Delete() error {
 	if !(self != nil && self.client != nil) {
 		return errors.New("tag client not found")
