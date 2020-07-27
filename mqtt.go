@@ -12,6 +12,7 @@ type TpMqtt struct {
 	MsgQueueBase
 	log    *logger.Logger
 	c      mqtt.Client
+	ch     chan *Tag
 	topics []string
 	ontag  OnTagCallback
 }
@@ -149,6 +150,7 @@ func newMqtt(cfg *MQConfig) (*TpMqtt, error) {
 	t := &TpMqtt{
 		topics: []string{},
 		ontag:  nil,
+		ch:     make(chan *Tag, 512),
 		log:    logger.New(),
 	}
 	// set debug log level
